@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../model/users');
 const router = express.Router();
-// const auth = require('../auth');
+const auth = require('../auth');
 
 //register
 
@@ -11,14 +11,15 @@ router.post("/register", (req, res, next) => {
     let password = req.body.password;
     bcrypt.hash(password, 7, function (err, hash) {
         if (err) {
-            throw new Error("Could not hash");
+            let err = new Error("Could not hash");
+            err.status = 500;
+            return next(err);
         }
         User.create({
-            name: req.body.name,
             username: req.body.username,
             password: hash,
             email: req.body.email,
-            phoneNumber: req.body.phoneNumber,
+            phone: req.body.phone,
             image: req.body.image
         })
             .then((user) => {
@@ -34,8 +35,9 @@ router.post("/register", (req, res, next) => {
 
 //login
 router.post("/login", (req, res, next) => {
+    console.log(req.body)
     User.findOne({
-        username: req.body.username
+        email: req.body.email
     })
         .then((user) => {
             if (user == null) {
@@ -57,6 +59,7 @@ router.post("/login", (req, res, next) => {
                             status:"Login successful",
                             token:token
                         });
+                        console.log(token);
                     }).catch(next);
             }
         }).catch(next);

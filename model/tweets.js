@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
-
-const userSchema = new mongoose.Schema({
+const tweetSchema = new mongoose.Schema({
     username:{
         type: String,
-        minlength: 3,
-        maxlength: 50
     },
-    password:{
+    name:{
         type: String,
         required: true
     },
-    email:{
+    tweet:{
         type: String,
         unique: true
     },
